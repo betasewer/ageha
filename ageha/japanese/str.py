@@ -143,5 +143,16 @@ class StrType:
             ss += kansuuji.write(num)
         return ss
 
+    def unichars(self, s):
+        """ @method
+        ユニコード文字オブジェクトに分解する。
+        Returns:
+            Sheet[Unichar](char, code, name):
+        """
+        from ageha.charpad import Unichar
+        return [Unichar.fromchar(c) for c in s]
+    
+
+
 
 

@@ -94,7 +94,42 @@ class Unichar:
             Str:
         """         
         return unicodedata.decomposition(self._ch)
-    
+
+    #
+    #
+    #
+    def combine(self, *marks):
+        """ @method
+        結合文字を付して、NFCで正規化する。
+        Params:
+            *marks(str): 結合文字の名前
+        Returns:
+            Str:
+        """
+        chars = []
+        chars.append(self._ch)
+        for mark in marks:
+            ucdname = convert_to_ucdname(mark)
+            markchar = unicodedata.lookup(ucdname)
+            chars.append(markchar)
+        ch = unicodedata.normalize("NFC", "".join(chars))
+        return ch
+
+    #
+    #
+    #
+    @classmethod
+    def fromchar(cls, ch, code=None):
+        if code is None: code = ord(ch)
+        return Unichar(
+            ch,
+            name = unicodedata.name(ch, None),
+            code = code,
+            number = unicodedata.numeric(ch, None),
+            category = unicodedata.category(ch),
+            eawidth = unicodedata.east_asian_width(ch)   
+        )
+
     def constructor(self, context, value):
         """ @meta
         Params:
@@ -109,28 +144,44 @@ class Unichar:
             else:
                 ch = unicodedata.lookup(value)
             code = ord(ch)
-       
-        return Unichar(
-            ch,
-            name = unicodedata.name(ch, None),
-            code = code,
-            number = unicodedata.numeric(ch, None),
-            category = unicodedata.category(ch),
-            eawidth = unicodedata.east_asian_width(ch)   
-        )
+        return Unichar.fromchar(ch, code)
         
     def stringify(self):
         """ @meta """
         return "'{}' ({}) {}".format(self._ch, self._code, self._name)
     
-    
-        
-    
+    def pprint(self, app):
+        """ @meta """
+        import textwrap
+        app.post("message", textwrap.dedent(
+        """
+        char: {}
+        name: {}
+        code: {:0X}
+        category: {}
+        east asian width: {}
+        """.format(self._ch, self._name, self._code, self._category, self._eawidth)))
 
-        
-    
-    
-    
-    
+
+def convert_to_ucdname(mark):
+    if mark == "acute":
+        mark = "acute-accent"
+    elif mark == "grave":
+        mark = "grave-accent"
+    elif mark == "accent":
+        mark = "acute-accent"
+    elif mark.startswith("small"):
+        parts = mark.split("-")
+        if len(parts) >= 2:
+            if parts[1] == "capital":
+                mark = "latin-letter-" + mark
+            else:
+                mark = "latin-small-letter" + mark[len("small"):]
+
+    name = " ".join([x.capitalize().replace("_","-") for x in mark.split("-")])
+    return "Combining {}".format(name)
+
+
+
     
     
