@@ -34,26 +34,26 @@ char_table = [
     ("?",   "？",    OOBUN, "interrogation", ),
 
     # 和文括弧
-    ("「",   "",     L_PAREN|WABUN, "かっこ", ),
-    ("」",   "",     R_PAREN|WABUN, "かっこ", ),
-    ("『",   "",     L_PAREN|WABUN, "二重;にじゅう", ),
-    ("』",   "",     R_PAREN|WABUN, "二重;にじゅう", ),
-    ("（",  "(",    L_PAREN|WABUN, "丸;まる", ),
-    ("）",  ")",    R_PAREN|WABUN, "丸;まる", ),
-    ("〈",   "‹",    L_PAREN|WABUN, "山;やま", ),
-    ("〉",   "›",    R_PAREN|WABUN, "山;やま", ),
-    ("《",   "«",    L_PAREN|WABUN, "二重山;にじゅうやま", ),
-    ("》",   "»",    R_PAREN|WABUN, "二重山;にじゅうやま", ),
-    ("〔",   "",     L_PAREN|WABUN, "亀甲;きっこう", ),
-    ("〕",   "",     R_PAREN|WABUN, "亀甲;きっこう", ),
-    ("［",  "[",    L_PAREN|WABUN, "角;大;かく;だい",),
-    ("］",  "]",    R_PAREN|WABUN, "角;大;かく;だい",),
-    ("【",   "",     L_PAREN|WABUN, "隅付き;すみつき"),
-    ("】",   "",     R_PAREN|WABUN, "隅付き;すみつき"),
-    ("｛",  "{",    L_PAREN|WABUN, "波;なみ",),
-    ("｝",  "}",    R_PAREN|WABUN, "波;なみ",),
-    ("〝",  "“",    L_PAREN|WABUN, "ちょんちょん"),
-    ("〟",  "”",    R_PAREN|WABUN, "ちょんちょん"),
+    ("「",   "",     L_PAREN|WABUN, "kakko;かっこ", ),
+    ("」",   "",     R_PAREN|WABUN, "kakko;かっこ", ),
+    ("『",   "",     L_PAREN|WABUN, "double-kakko;二重;にじゅう", ),
+    ("』",   "",     R_PAREN|WABUN, "double-kakko;二重;にじゅう", ),
+    ("（",  "(",    L_PAREN|WABUN, "maru-kakko;丸;まる", ),
+    ("）",  ")",    R_PAREN|WABUN, "maru-kakko;丸;まる", ),
+    ("〈",   "‹",    L_PAREN|WABUN, "yama-kakko;山;やま", ),
+    ("〉",   "›",    R_PAREN|WABUN, "yama-kakko;山;やま", ),
+    ("《",   "«",    L_PAREN|WABUN, "double-yama-kakko;二重山;にじゅうやま", ),
+    ("》",   "»",    R_PAREN|WABUN, "double-yama-kakko;二重山;にじゅうやま", ),
+    ("〔",   "",     L_PAREN|WABUN, "kikko-kakko;亀甲;きっこう", ),
+    ("〕",   "",     R_PAREN|WABUN, "kikko-kakko;亀甲;きっこう", ),
+    ("［",  "[",    L_PAREN|WABUN, "dai-kakko;bracket;角;大;かく;だい",),
+    ("］",  "]",    R_PAREN|WABUN, "dai-kakko;bracket;角;大;かく;だい",),
+    ("【",   "",     L_PAREN|WABUN, "sumi-kakko;隅付き;すみつき"),
+    ("】",   "",     R_PAREN|WABUN, "sumi-kakko;隅付き;すみつき"),
+    ("｛",  "{",    L_PAREN|WABUN, "nami-kakko;brace;波;なみ",),
+    ("｝",  "}",    R_PAREN|WABUN, "nami-kakko;brace;波;なみ",),
+    ("〝",  "“",    L_PAREN|WABUN, "tyontyon;ちょんちょん"),
+    ("〟",  "”",    R_PAREN|WABUN, "tyontyon;ちょんちょん"),
     ("＜",  "〈",    L_PAREN|WABUN|CONVERT, ""),
     ("＞",  "〉",    R_PAREN|WABUN|CONVERT, ""),
     ("≺",  "〈",    L_PAREN|WABUN|CONVERT, ""),
@@ -105,7 +105,7 @@ char_table = [
     (chr(0x02BC), chr(0x2019), OOBUN|CONVERT, ""),  # 02BC MODIFIER LETTER APOSTROPHE
 
     # 棒
-    (chr(0x2010),   "",   WABUN, "ハイフン"),            # ‐ HYPHEN
+    (chr(0x2010),   "",   WABUN, "hyphen;ハイフン"),     # ‐ HYPHEN
     (chr(0x2010),   "",   OOBUN, "hyphen"),           # ‐ HYPHEN 
     (chr(0x2011),   chr(0x2010),  WABUN|CONVERT, ""), # ‑ NON-BREAKING HYPHEN
     (chr(0x2012),   chr(0x2010),  WABUN|CONVERT, ""), # ‒ FIGURE DASH
@@ -115,7 +115,7 @@ char_table = [
     (chr(0x2212),   chr(0x2010),  WABUN|CONVERT, ""), # − MINUS (MATH)
     (chr(0xFF0D),   chr(0x2010),  WABUN|CONVERT, ""), # － FULLWIDTH HYPHEN-MINUS
 
-    (chr(0x2015),   chr(0x2014),  WABUN, "ダッシュ;ダーシ"), # ― HORIZONTAL BAR 
+    (chr(0x2015),   chr(0x2014),  WABUN, "dash;ダッシュ;ダーシ"), # ― HORIZONTAL BAR 
     (chr(0x2014),   chr(0x2015),  OOBUN, "dash"),       # — EM DASH
     (chr(0x2014),   chr(0x2015),  WABUN|CONVERT, ""),   # — EM DASH
     (chr(0x2E3A),   chr(0x2015),  WABUN|CONVERT, ""),   # ⸺ TWO EM DASH
@@ -127,7 +127,7 @@ char_table = [
     (chr(0x2502),   chr(0x2015),  WABUN|CONVERT, ""),   # │ BOX DRAWINGS LIGHT VERTICAL （罫線）
 
     # リーダ
-    (chr(0x2026), "...", WABUN, "リーダ"),           # … HORIZONTAL ELLIPSIS 
+    (chr(0x2026), "...", WABUN, "leader;リーダ"),           # … HORIZONTAL ELLIPSIS 
     (chr(0xFE19), chr(0x2026), WABUN|CONVERT, ""), # PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS 
     (chr(0x221E), chr(0x2026), WABUN|CONVERT, ""), # ⋮ VERTICAL ELLIPSIS 
     (chr(0x205D), chr(0x2026), WABUN|CONVERT, ""), # ⁝ TRICOLON 
@@ -136,49 +136,49 @@ char_table = [
     (chr(0x2025), chr(0x2026), WABUN|CONVERT, ""), # ‥ TWO DOT LEADER 
 
     # 中黒
-    (chr(0x30FB), "", WABUN, "中黒;なかぐろ"),               # KATAKANA MIDDLE DOT  
+    (chr(0x30FB), "", WABUN, "nakaguro;中黒;なかぐろ"),               # KATAKANA MIDDLE DOT  
     (chr(0xFF65), chr(0x30FB), WABUN|CONVERT, "半角中黒"), # HALFWIDTH KATAKANA MIDDLE DOT
     
     # 音引き
-    (chr(0x30FC), "", WABUN, "音引き;おんびき"),            # ー KATAKANA-HIRAGANA PROLONGED SOUND MARK 
+    (chr(0x30FC), "", WABUN, "onbiki;音引き;おんびき"),            # ー KATAKANA-HIRAGANA PROLONGED SOUND MARK 
     (chr(0xFF70), chr(0x30FC), WABUN|CONVERT, ""),       # ｰ HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK 
 
     # 波ダッシュ・チルダ
     ("~", chr(0xFF5E), OOBUN, "tilde"),                 # 007E TILDE
-    (chr(0x301C), "~", WABUN, "波ダッシュ"),               # 301C WAVE DASH
+    (chr(0x301C), "~", WABUN, "wave-dash;波ダッシュ"),      # 301C WAVE DASH
     ("~", chr(0x301C), WABUN|CONVERT, ""),              # 007E
     (chr(0xFF5E), chr(0x301C), WABUN|CONVERT, ""),      # FF5E FULLWIDTH TILDE
     (chr(0x2053), chr(0x301C), WABUN|CONVERT, ""),      # 2053 SWUNG DASH
 
     # その他
     ("#", "＃", OOBUN, "sharp"),
-    ("＃", "#", WABUN, "シャープ"),    
+    ("＃", "#", WABUN, "sharp;シャープ"),    
     ("$", "＄", OOBUN, "dollar"),
-    ("＄", "$", WABUN, "ドル"),
+    ("＄", "$", WABUN, "dollar;ドル"),
     ("%", "％", OOBUN, "percent"),
-    ("％", "%", WABUN, "パーセント"),
+    ("％", "%", WABUN, "percent;パーセント"),
     ("&", "＆", OOBUN, "ampersand;and"),
-    ("＆", "&", WABUN, "アンパサンド;アンド"),
+    ("＆", "&", WABUN, "ampersand;アンパサンド;アンド"),
     ("*", "＊", OOBUN, "asterisk"),
-    ("＊", "*", WABUN, "アステリ"),
+    ("＊", "*", WABUN, "asterisk;アステリ"),
     ("+", "＋", OOBUN, "plus"),
-    ("＋", "+", WABUN, "プラス"),
+    ("＋", "+", WABUN, "plus;プラス"),
     ("/", "／", OOBUN, "solidus;slash"),
-    ("／", "/", WABUN, "スラッシュ"),
+    ("／", "/", WABUN, "slash;スラッシュ"),
     ("\\", "＼", OOBUN, "reverse-solidus;backslash"),
-    ("＼", "\\", WABUN, "バックスラッシュ"),
+    ("＼", "\\", WABUN, "backslash;バックスラッシュ"),
     ("=", "＝", OOBUN, "equal"),
-    ("＝", "=", WABUN, "イコール"),
+    ("＝", "=", WABUN, "equal;イコール"),
     ("@", "＠", OOBUN, "atmark"),
-    ("＠", "@", WABUN, "アットマーク"),
+    ("＠", "@", WABUN, "atmark;アットマーク"),
     ("^", "＾", OOBUN, "circumflex"),
-    ("＾", "^", WABUN, "サーカムフレックス"),
+    ("＾", "^", WABUN, "circumflex;サーカムフレックス"),
     ("`", "｀", OOBUN, "grave"),
-    ("｀", "`", WABUN, "グレーヴ"),
-    ("|", "｜", OOBUN, "verticalline"),
-    ("｜", "|", WABUN, "縦線"),
+    ("｀", "`", WABUN, "grave;グレーヴ"),
+    ("|", "｜", OOBUN, "vertical-line"),
+    ("｜", "|", WABUN, "vertical-line縦線"),
     ("_", "＿", OOBUN, "underscore"),
-    ("＿", "_", WABUN, "アンダーバー"),
+    ("＿", "_", WABUN, "underscode;アンダーバー"),
 
     # 縦書き用記号
     ("︵", "（",    L_PAREN|WABUN|CONVERT, ""),
@@ -224,6 +224,7 @@ def glob_entry(text, *, dest=False):
         if text == char and (not dest or destchar):
             yield entry
 
+
 def convert(this, text):
     """
     Params:
@@ -261,6 +262,7 @@ def convert(this, text):
 
     return result
 
+
 def tate_convert(text):
     """
     縦書きの和文に適した約物に変換する。
@@ -270,3 +272,84 @@ def tate_convert(text):
         str: 
     """
     return convert(WABUN, text)
+
+#
+#
+#
+class Punct:
+    """ @type
+    約物に素早くアクセスする。
+    """
+    def __init__(self, entry):
+        self._entry = entry
+        
+    def char(self):
+        """ @method
+        Returns:
+            Str:
+        """
+        if "_" in self._entry:
+            return self._entry["_"]
+        elif "l" in self._entry and "r" in self._entry:
+            return self._entry["l"] + self._entry["r"]
+        else:
+            raise ValueError("No entry")
+        
+    def enclose(self, text):
+        """ @method
+        Params:
+            text(Str):
+        Returns:
+            Str:
+        """
+        if "_" in self._entry:
+            return self._entry["_"] + text + self._entry["_"]
+        elif "l" in self._entry and "r" in self._entry:
+            return self._entry["l"] + text + self._entry["r"]
+        else:
+            raise ValueError("No entry")
+    
+    def copy(self, spirit):
+        """ @task
+        クリップボードにコピーする。
+        """
+        spirit.clipboard_copy(self.char())    
+        
+    def constructor(self, context, value):
+        """ @meta
+        Params:
+            Str:
+        """
+        cf = WABUN
+        flags, sep, name = value.partition("/")
+        if sep:
+            if flags == "ou":
+                cf = OOBUN
+            elif flags == "wa":
+                cf = WABUN
+            elif flags == "variant":
+                cf = CONVERT
+        else:
+            name = value
+        
+        chars = {}
+        for entry in char_table:
+            char, _dest, f, cname = entry
+            if cf & f == 0:
+                continue
+            if name in cname.split(";"):
+                if L_PAREN & f:
+                    chars["l"] = char
+                    continue
+                elif R_PAREN & f:
+                    chars["r"] = char
+                    break
+                else:
+                    chars["_"] = char
+                    break
+
+        if len(chars) == 0:
+            raise ValueError("Unknown")
+        return Punct(chars)
+        
+        
