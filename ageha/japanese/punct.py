@@ -87,7 +87,7 @@ char_table = [
     #('"',   "“",    R_PAREN|OOBUN|CONVERT, "", ),
     #('"',   "”",    L_PAREN|OOBUN|CONVERT, "", ),
 
-    # 引用符の和文への変換
+    # 欧文引用符の和文への変換
     #("‘",   "〝",     L_PAREN|WABUN|CONVERT, "", ), 
     #("’",   "〟",     R_PAREN|WABUN|CONVERT, "", ), クォーテーションマークに使われうるので変換しない
     ("‚",   "〝",     L_PAREN|WABUN|CONVERT, "", ),
@@ -104,9 +104,10 @@ char_table = [
     (chr(0x0027), chr(0x2019), OOBUN|CONVERT, ""),  # 楔形からオタマジャクシ形への変換 -> 2019 RIGHT SINGLE QUOTATION MARK 
     (chr(0x02BC), chr(0x2019), OOBUN|CONVERT, ""),  # 02BC MODIFIER LETTER APOSTROPHE
 
-    # 棒
+    # 短い棒
     (chr(0x2010),   "",   WABUN, "hyphen;ハイフン"),     # ‐ HYPHEN
     (chr(0x2010),   "",   OOBUN, "hyphen"),           # ‐ HYPHEN 
+    ## 和文での変換　- 一括してHYPHENに
     (chr(0x2011),   chr(0x2010),  WABUN|CONVERT, ""), # ‑ NON-BREAKING HYPHEN
     (chr(0x2012),   chr(0x2010),  WABUN|CONVERT, ""), # ‒ FIGURE DASH
     (chr(0x2013),   chr(0x2010),  WABUN|CONVERT, ""), # – EN DASH
@@ -114,9 +115,17 @@ char_table = [
     (chr(0x002D),   chr(0x2010),  WABUN|CONVERT, ""), # - HYPHEN MINUS
     (chr(0x2212),   chr(0x2010),  WABUN|CONVERT, ""), # − MINUS (MATH)
     (chr(0xFF0D),   chr(0x2010),  WABUN|CONVERT, ""), # － FULLWIDTH HYPHEN-MINUS
+    ## 欧文での変換　- EN DASH, HYPHEN-MINUSに
+    (chr(0x2011),   chr(0x2013),  OOBUN|CONVERT, ""), # ‑ NON-BREAKING HYPHEN
+    (chr(0x2012),   chr(0x2013),  OOBUN|CONVERT, ""), # ‒ FIGURE DASH
+    ("︲",          chr(0x2013),  OOBUN|CONVERT, ""), # PRESENTATION FORM FOR VERTICAL EN DASH 
+    (chr(0x2212),   chr(0x002D),  OOBUN|CONVERT, ""), # − MINUS (MATH)
+    (chr(0xFF0D),   chr(0x002D),  OOBUN|CONVERT, ""), # － FULLWIDTH HYPHEN-MINUS
 
-    (chr(0x2015),   chr(0x2014),  WABUN, "dash;ダッシュ;ダーシ"), # ― HORIZONTAL BAR 
-    (chr(0x2014),   chr(0x2015),  OOBUN, "dash"),       # — EM DASH
+    # 長い棒
+    (chr(0x2015),   chr(0x2014),  WABUN, "dash;ダッシュ;ダーシ"),  # ― HORIZONTAL BAR 
+    (chr(0x2014),   chr(0x2015),  OOBUN, "dash"),              # — EM DASH
+    ## 和文での変換　- 一括してHORIZONTAL BARに
     (chr(0x2014),   chr(0x2015),  WABUN|CONVERT, ""),   # — EM DASH
     (chr(0x2E3A),   chr(0x2015),  WABUN|CONVERT, ""),   # ⸺ TWO EM DASH
     (chr(0x2E3B),   chr(0x2015),  WABUN|CONVERT, ""),   # ⸻ THREE EM DASH
@@ -125,15 +134,31 @@ char_table = [
     (chr(0xFFE8),   chr(0x2015),  WABUN|CONVERT, ""),   # ￨ HALFWIDTH FORMS LIGHT VERTICAL 
     (chr(0x2500),   chr(0x2015),  WABUN|CONVERT, ""),   # ─ BOX DRAWINGS LIGHT HORIZONTAL （罫線）
     (chr(0x2502),   chr(0x2015),  WABUN|CONVERT, ""),   # │ BOX DRAWINGS LIGHT VERTICAL （罫線）
+    ## 欧文での変換　- EM DASHとHORIZONTAL BARに
+    ("︱",          chr(0x2014),  OOBUN|CONVERT, ""),   # PRESENTATION FORM FOR VERTICAL EM DASH 
+    (chr(0x2E3A),   chr(0x2015),  OOBUN|CONVERT, ""),   # ⸺ TWO EM DASH
+    (chr(0x2E3B),   chr(0x2015),  OOBUN|CONVERT, ""),   # ⸻ THREE EM DASH
+    (chr(0xFF5C),   chr(0x2015),  OOBUN|CONVERT, ""),   # ｜ FULLWIDTH VERTICAL LINE
+    (chr(0xFFE8),   chr(0x2015),  OOBUN|CONVERT, ""),   # ￨ HALFWIDTH FORMS LIGHT VERTICAL 
+    (chr(0x2500),   chr(0x2015),  OOBUN|CONVERT, ""),   # ─ BOX DRAWINGS LIGHT HORIZONTAL （罫線）
+    (chr(0x2502),   chr(0x2015),  OOBUN|CONVERT, ""),   # │ BOX DRAWINGS LIGHT VERTICAL （罫線）
 
     # リーダ
-    (chr(0x2026), "...", WABUN, "leader;リーダ"),           # … HORIZONTAL ELLIPSIS 
-    (chr(0xFE19), chr(0x2026), WABUN|CONVERT, ""), # PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS 
-    (chr(0x221E), chr(0x2026), WABUN|CONVERT, ""), # ⋮ VERTICAL ELLIPSIS 
-    (chr(0x205D), chr(0x2026), WABUN|CONVERT, ""), # ⁝ TRICOLON 
-    (chr(0x205E), chr(0x2026), WABUN|CONVERT, ""), # ⁞ VERTICAL DOTS
-    (chr(0x22EF), chr(0x2026), WABUN|CONVERT, ""), #  ⋯ MIDLINE HORIZONTAL ELLIPSIS (MATH) 
-    (chr(0x2025), chr(0x2026), WABUN|CONVERT, ""), # ‥ TWO DOT LEADER 
+    (chr(0x2026), "...", WABUN, "leader;リーダ"),         # … HORIZONTAL ELLIPSIS 
+    ## 和文での変換
+    (chr(0xFE19), chr(0x2026), WABUN|CONVERT, ""),      # PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS 
+    (chr(0x221E), chr(0x2026), WABUN|CONVERT, ""),      # ⋮ VERTICAL ELLIPSIS 
+    (chr(0x205D), chr(0x2026), WABUN|CONVERT, ""),      # ⁝ TRICOLON 
+    (chr(0x205E), chr(0x2026), WABUN|CONVERT, ""),      # ⁞ VERTICAL DOTS
+    (chr(0x22EF), chr(0x2026), WABUN|CONVERT, ""),      #  ⋯ MIDLINE HORIZONTAL ELLIPSIS (MATH) 
+    (chr(0x2025), chr(0x2026), WABUN|CONVERT, ""),      # ‥ TWO DOT LEADER 
+    ## 欧文での変換
+    (chr(0xFE19), "...", OOBUN|CONVERT, ""),      # PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS 
+    (chr(0x221E), "...", OOBUN|CONVERT, ""),      # ⋮ VERTICAL ELLIPSIS 
+    (chr(0x205D), "...", OOBUN|CONVERT, ""),      # ⁝ TRICOLON 
+    (chr(0x205E), "...", OOBUN|CONVERT, ""),      # ⁞ VERTICAL DOTS
+    (chr(0x22EF), "...", OOBUN|CONVERT, ""),      #  ⋯ MIDLINE HORIZONTAL ELLIPSIS (MATH) 
+    (chr(0x2025), "...", OOBUN|CONVERT, ""),      # ‥ TWO DOT LEADER 
 
     # 中黒
     (chr(0x30FB), "", WABUN, "nakaguro;中黒;なかぐろ"),               # KATAKANA MIDDLE DOT  
@@ -145,10 +170,12 @@ char_table = [
 
     # 波ダッシュ・チルダ
     ("~", chr(0xFF5E), OOBUN, "tilde"),                 # 007E TILDE
-    (chr(0x301C), "~", WABUN, "wave-dash;波ダッシュ"),      # 301C WAVE DASH
-    ("~", chr(0x301C), WABUN|CONVERT, ""),              # 007E
+    (chr(0x301C), "~", WABUN, "wave-dash;波ダッシュ"),     # 301C WAVE DASH
+    ("~",         chr(0x301C), WABUN|CONVERT, ""),      # 007E
     (chr(0xFF5E), chr(0x301C), WABUN|CONVERT, ""),      # FF5E FULLWIDTH TILDE
     (chr(0x2053), chr(0x301C), WABUN|CONVERT, ""),      # 2053 SWUNG DASH
+    (chr(0xFF5E), "~",         OOBUN|CONVERT, ""),      # FF5E FULLWIDTH TILDE
+    (chr(0x2053), "~",         OOBUN|CONVERT, ""),      # 2053 SWUNG DASH
 
     # その他
     ("#", "＃", OOBUN, "sharp"),
@@ -273,6 +300,89 @@ def tate_convert(text):
     """
     return convert(WABUN, text)
 
+
+def wabun_convertible_chars(chars):
+    """
+    和文上で変換すべき文字である場合はエントリを返す。
+    """
+    for entry in glob_entry(chars):
+        _curchar, destchar, flags, _name = entry
+        if flags & (WABUN|CONVERT) == (WABUN|CONVERT):
+            yield entry
+        #if (flags & OOBUN and flags & CONVERT == 0):
+        #    yield entry
+
+def oobun_convertible_chars(chars):
+    """
+    欧文上で変換すべき文字である場合はエントリを返す。
+    """
+    for entry in glob_entry(chars):
+        _curchar, destchar, flags, _name = entry
+        if (flags & (OOBUN|CONVERT) == (OOBUN|CONVERT)):
+            yield entry
+        if (flags & WABUN and flags & CONVERT == 0):
+            yield entry
+
+def lookup_chars(instruction):
+    """
+    名前で文字を探し出す。
+    """
+    cf = 0
+    flags, sep, name = instruction.partition("/")
+    if sep:
+        if "ou" in flags or "欧" in flags:
+            cf |= OOBUN
+        if "wa" in flags or "和" in flags:
+            cf |= WABUN
+        if "convert" in flags:
+            cf |= CONVERT
+        if "left" in flags or "左" in flags:
+            cf |= L_PAREN
+        if "right" in flags or "右" in flags:
+            cf |= R_PAREN
+    else:
+        name = instruction
+    
+    if cf == 0:
+        cf = WABUN|OOBUN
+    
+    chars = {}
+    for entry in char_table:
+        char, _dest, f, cname = entry
+        if cf & f == 0:
+            continue
+        if name in cname.split(";"):
+            if L_PAREN & f:
+                chars["l"] = char
+                chars["c"] = char
+                continue
+            elif R_PAREN & f:
+                chars["r"] = char
+                chars["c"] = char
+                break
+            else:
+                chars["c"] = char
+                break
+
+    if len(chars) == 0:
+        raise ValueError("Unknown")
+    return chars
+
+    
+def lookup_langtype(ch):
+    """
+    文字で検索して欧文・和文の別を調べる。
+    """
+    for entry in char_table:
+        char, _dest, f, cname = entry
+        if ch == char:
+            if WABUN & f and (CONVERT & f) == 0:
+                return "wa"
+            elif OOBUN & f and (CONVERT & f) == 0:
+                return "ou"
+    return None
+
+
 #
 #
 #
@@ -288,8 +398,8 @@ class Punct:
         Returns:
             Str:
         """
-        if "_" in self._entry:
-            return self._entry["_"]
+        if "c" in self._entry:
+            return self._entry["c"]
         elif "l" in self._entry and "r" in self._entry:
             return self._entry["l"] + self._entry["r"]
         else:
@@ -302,8 +412,8 @@ class Punct:
         Returns:
             Str:
         """
-        if "_" in self._entry:
-            return self._entry["_"] + text + self._entry["_"]
+        if "c" in self._entry:
+            return self._entry["c"] + text + self._entry["c"]
         elif "l" in self._entry and "r" in self._entry:
             return self._entry["l"] + text + self._entry["r"]
         else:
@@ -320,36 +430,7 @@ class Punct:
         Params:
             Str:
         """
-        cf = WABUN
-        flags, sep, name = value.partition("/")
-        if sep:
-            if flags == "ou":
-                cf = OOBUN
-            elif flags == "wa":
-                cf = WABUN
-            elif flags == "variant":
-                cf = CONVERT
-        else:
-            name = value
-        
-        chars = {}
-        for entry in char_table:
-            char, _dest, f, cname = entry
-            if cf & f == 0:
-                continue
-            if name in cname.split(";"):
-                if L_PAREN & f:
-                    chars["l"] = char
-                    continue
-                elif R_PAREN & f:
-                    chars["r"] = char
-                    break
-                else:
-                    chars["_"] = char
-                    break
-
-        if len(chars) == 0:
-            raise ValueError("Unknown")
+        chars = lookup_chars(value)
         return Punct(chars)
         
         

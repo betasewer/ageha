@@ -1,4 +1,5 @@
 import string
+import unicodedata
 
 #
 #
@@ -58,5 +59,22 @@ class BijectiveNumeric:
         return num-1
 
 ABCNumeric = BijectiveNumeric(string.ascii_uppercase)
+
+
+
+def parse_decimal(text):
+    """
+    ユニコードでDecimalあるいはDigitに関連付けられた数値に変換し、10進数値を返す
+    """
+    digits = []
+    for ch in text:
+        dig = unicodedata.decimal(ch, None)
+        if dig is None:
+            dig = unicodedata.digit(ch, None)
+            if dig is None:
+                continue
+        digits.append(dig)
+    return compose_number(0, digits)
+
 
 
