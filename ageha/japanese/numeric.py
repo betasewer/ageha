@@ -41,7 +41,7 @@ class KansuujiNumeral():
         digits.reverse()
         return digits
 
-    def parse(self, text):
+    def parse(self, text, *, strict=True):
         """ 
         漢数字を数値に変換する。十式、〇式両方に対応。
         Params:
@@ -52,12 +52,19 @@ class KansuujiNumeral():
         num = 0
         digbuf = []
         subdigit = 0
-        chbuf = ""
+        hiunitbuf = []
+        def checkbufempty(buf):
+            if len(buf)>0:
+                if strict:
+                    raise ValueError("解釈不能な文字: " + "".join(buf))
+                else:
+                    buf.clear()
+            
         for ch in text:
             if ch in self.numbers:
                 d = self.numbers.find(ch)
                 digbuf.append(d)
-                chbuf = ""
+                checkbufempty(hiunitbuf)
                 continue
             elif ch in self.subunits:
                 exp = self.subunits.index(ch) + 1
@@ -65,28 +72,30 @@ class KansuujiNumeral():
                     digbuf.append(1)
                 subdigit += compose_number(exp, digbuf)
                 digbuf.clear()
-                chbuf = ""
+                checkbufempty(hiunitbuf)
                 continue
             
-            chbuf += ch
-            for hiunit in self.hiunits:
-                if hiunit in chbuf:
-                    exp = 4 * (self.hiunits.index(chbuf) + 1)
+            hiunitbuf.append(ch)
+            for i, hiunit in enumerate(self.hiunits):
+                s = "".join(hiunitbuf)
+                if hiunit == s:
+                    exp = 4 * (i + 1)
                     if digbuf:
                         num += compose_number(exp, digbuf)
                         digbuf.clear()
                     if subdigit:
                         num += subdigit * 10 ** exp
                         subdigit = 0
-                    chbuf = ""
+                    hiunitbuf.clear()
 
-            if len(chbuf) > 3:
-                chbuf = chbuf[1:]
+            if len(hiunitbuf) > 3:
+                hiunitbuf = hiunitbuf[1:]
 
         if digbuf:
             num += compose_number(0, digbuf)
         if subdigit:
             num += subdigit
+        checkbufempty(hiunitbuf)
 
         return num
     
@@ -146,5 +155,43 @@ write_kansuuji = kansuuji.write
 write_unit_kansuuji = kansuuji.unit_write
 
         
-   
+#
+#
+#
+class KanBasic:
+    def constructor(self, value):
+        """ @meta """
+        return parse_kansuuji(value)
+
+class Kan(KanBasic):
+    """ @type subtype
+    単位語なしの漢数字
+    BaseType:
+        Int: 
+    """
+    def stringify(self, value):
+        """ @meta """
+        return kansuuji.nounit_write(value)
+
+class Kan10(KanBasic):
+    """ @type subtype
+    単位語を明記する漢数字
+    BaseType:
+        Int: 
+    """
+    def stringify(self, value):
+        """ @meta """
+        return kansuuji.unit_write(value)
+
+class Kan1000(KanBasic):
+    """ @type subtype
+    4桁ごとの単位語を明記する漢数字
+    BaseType:
+        Int: 
+    """
+    def stringify(self, value):
+        """ @meta """
+        return kansuuji.write(value)
+
+
 

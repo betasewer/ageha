@@ -1,6 +1,5 @@
 import unicodedata
 
-
 class Uchar:
     """ @type
     ユニコード文字
@@ -30,12 +29,14 @@ class Uchar:
         """
         return self._ch
     
-    def name(self):
-        """ @method
+    def name(self, app):
+        """ @method spirit
         文字についた名前。
         Returns:
             Str:
         """
+        if self._name is None:
+            self._name = self._lookup_alias(app)
         return self._name
         
     def code(self):
@@ -63,7 +64,7 @@ class Uchar:
         return self._category
     
     def east_asian_width(self):
-        """ @method
+        """ @method [eaw]
         全角か半角か。
         Returns:
             Str:
@@ -71,7 +72,7 @@ class Uchar:
         return self._eawidth
     
     def bidirectional(self):
-        """ @method
+        """ @method [bidi]
         文字に割り当てられた双方向クラス。
         Returns:
             Str:
@@ -79,7 +80,7 @@ class Uchar:
         return unicodedata.bidirectional(self._ch)
     
     def combining(self):
-        """ @method
+        """ @method [comb]
         文字に割り当てられた正規結合クラス。
         Returns:
             Str:
@@ -88,7 +89,7 @@ class Uchar:
         return com if com != 0 else ""
         
     def mirrored(self):
-        """ @method
+        """ @method [mirror]
         鏡像化のプロパティ
         Returns:
             Bool:
@@ -97,12 +98,55 @@ class Uchar:
         return True if mirr == 1 else False
     
     def decomposition(self):
-        """ @method
+        """ @method [decomp]
         文字に割り当てられた文字分解マッピング。
         Returns:
             Str:
         """         
         return unicodedata.decomposition(self._ch)
+
+    #
+    # UCDより
+    #
+    def _open_unicode_database(self, app, classname):
+        from ageha.unicode.init import unicode_database
+        return unicode_database.open(app.root, classname)
+
+    def age(self, app):
+        """ @task
+        初めて収録されたユニコードのバージョン。
+        Returns:
+            Str:
+        """
+        return self._open_unicode_database(app, "ucd.Age").find(self._code)
+
+    def block(self, app):
+        """ @task
+        ブロック名。
+        Returns:
+            Str:
+        """
+        return self._open_unicode_database(app, "ucd.Blocks").find(self._code)
+
+    def script(self, app):
+        """ @task
+        文字体系の名前。
+        Returns:
+            Str:
+        """
+        return self._open_unicode_database(app, "ucd.Scripts").find(self._code)
+
+    def _lookup_alias(self, app):
+        """ コードからエイリアス名を得る。 """
+        return self._open_unicode_database(app, "ucd.NameAliases").find_and_gettop(self._code)
+
+    def vertical_type(self, app):
+        """ @task
+        縦書きにした場合の変形方法。
+        Returns:
+            Str: 変形方法クラス
+        """
+        return self._open_unicode_database(app, "ucd.VerticalOrientations").find(self._code)
 
     #
     #
@@ -134,7 +178,7 @@ class Uchar:
             **kwargs
         )
 
-    def constructor(self, context, value):
+    def constructor(self, value):
         """ @meta
         Params:
             Int|Str: code | char
@@ -146,7 +190,10 @@ class Uchar:
             if len(value) == 1:
                 ch = value
             else:
-                ch = unicodedata.lookup(value)
+                try:
+                    ch = unicodedata.lookup(value)
+                except KeyError:
+                    raise ValueError("'{}'という名の文字は存在しません".format(value))
             code = ord(ch)
         return Uchar.fromchar(ch, code)
         
@@ -259,7 +306,7 @@ class Alpha(Uchar):
         """
         return self._with_combine(chr(0x0328))
 
-    def constructor(self, context, value):
+    def constructor(self, value):
         """ @meta
         Params:
             Str: name
@@ -352,7 +399,7 @@ class Combining(Uchar):
     """ @type
     結合文字。
     """
-    def constructor(self, context, value):
+    def constructor(self, value):
         """ @meta
         Params:
             Str: name
@@ -364,6 +411,7 @@ class Combining(Uchar):
 
     @classmethod
     def convert_to_ucdname(cls, mark):
+        mark = mark.lower()
         if mark == "acute":
             mark = "acute-accent"
         elif mark == "grave":
@@ -415,7 +463,7 @@ class Shape(Uchar):
         super().__init__(chr, name, code, number, category, eawidth)
         self._shapecodes = shapecodes
 
-    def constructor(self, context, value):
+    def constructor(self, value):
         """ @meta
         Params:
             Str|Int: name
@@ -578,4 +626,163 @@ class Shape(Uchar):
         ]
         
 
+class Kanji(Uchar):
+    """ @type
+    漢字。
+    """
+    def _open(self, app, classname):
+        from ageha.unicode.init import unicode_database
+        return unicode_database.open(app.root, classname)
+
+    def constructor(self, value):
+        """@meta 
+        Params:
+            int|str: [prefix]+[code] prefix can be = [U]nicode | [JIS] | 
+        """
+        if isinstance(value, int):
+            return Kanji.fromchar(chr(value), value)
+        
+        elif isinstance(value, Uchar):
+            return Kanji.fromchar(value._ch, value._code)
+
+        elif isinstance(value, str):
+            prefix, sep, code = value.partition("+")
+            if not sep:
+                code = prefix
+                prefix = "U"
+            prefix = prefix.lower()
+
+            def _open(classname):
+                from ageha.unicode.init import unicode_database
+                return unicode_database.open(context.root, classname)
+
+            cs = []
+            if prefix == "u":
+                # Unicode
+                cs = [code]
+            elif prefix == "jis":
+                # JIS 句点コード
+                code = code.rjust(4,"0")
+                cs = _open("unihan.OtherMappings").searchby_jis(code)
+            elif prefix == "cangjie":
+                cs = _open("unihan.DictLikeData").searchby_cangjie(code)
+            elif prefix == "cihai":
+                cs = _open("unihan.DictLikeData").searchby_cihai(code)
+            elif prefix == "ibm":
+                cs = _open("unihan.OtherMappings").searchby_ibm_japan(code)
+            elif prefix == "denma":
+                cs = _open("unihan.OtherMappings").searchby_denma(code)
+
+            if not cs:
+                raise ValueError("文字が見つかりませんでした")
+            ucode = int(cs[0], 16)
+            return Kanji.fromchar(chr(ucode), ucode)
+
+    # StrokeCounts
     
+    # Readings
+
+    # RadicalStroke
+    def radical_stroke(self, app):
+        """ @task
+        radical and stroke count information on the glyphs in Adobe-Japan1-6.
+        Returns:
+            ObjectCollection:
+        """
+        return self._open(app, "unihan.RadicalStroke").get_RSAdobe_Japan1_6(self._code)
+
+    # Variants
+
+    # DictLikeData
+    def cangjie(self, app):
+        """@task
+        [cangjie] cangjie input code
+        Returns:
+            Str: code
+        """
+        return self._open(app, "unihan.DictLikeData").get(self._code, "kCangjie")
+    
+    def cihai(self, app):
+        """@task
+        [cihai] position in the cihai dictionary
+        Returns:
+            Str: page.row.position
+        """
+        return self._open(app, "unihan.DictLikeData").get(self._code, "kCihaiT")
+
+    def phonetic(self, app):
+        """@task
+        phonetic class for the character
+        Returns:
+            Str: 
+        """
+        return self._open(app, "unihan.DictLikeData").get(self._code, "kPhonetic")
+
+    def grade_level(self, app):
+        """@task
+        The primary grade in the Hong Kong school system by which a student is expected to know the character
+        Returns:
+            int:
+        """
+        l = self._open(app, "unihan.DictLikeData").get(self._code, "kGradeLevel")
+        if l:
+            return int(l)        
+    
+    def is_unihancore2000(self, app):
+        """@task
+        True if in the UnihanCore2020 set (the minimal set of required ideographs for East Asia)
+        Returns:
+            bool:
+        """
+        return self._open(app, "unihan.DictLikeData").get(self._code, "kUnihanCore2020") is not None
+
+    def strange(self, app):
+        """@task
+        present if this is a strange character
+        Returns:
+            Str:
+        """
+        return self._open(app, "unihan.DictLikeData").get_strange(self._code)
+
+    def ibm_japan(self, app):
+        """@task
+        [ibm] IBMJapan code
+        Returns:
+            Str:
+        """
+        return self._open(app, "unihan.OtherMappings").get_ibmjapan(self._code)
+    
+    def jis(self, app):
+        """@task
+        [jis] The JIS X 0208/0212/0213 mapping for this character
+        Returns:
+            ObjectCollection: ku/ten form | men/ku/ten form (JIS X 0213)
+        """
+        return self._open(app, "unihan.OtherMappings").get_jis(self._code)
+    
+    def joyo(self, app):
+        """@task
+        常用漢字の情報
+        Returns:
+            ObjectCollection: 掲載年もしくはコードポイント
+        """
+        return self._open(app, "unihan.OtherMappings").get_JoyoKanji(self._code)
+        
+    def jinmeiyo(self, app):
+        """@task
+        常用漢字に含まれないが人名に使用できる、人名用漢字の情報
+        Returns:
+            ObjectCollection: 掲載年と対応する新字体のコードポイント
+        """
+        return self._open(app, "unihan.OtherMappings").get_JinmeiyoKanji(self._code)
+
+    def denma(self, app):
+        """ @task
+        [denma] The PRC telegraph code
+        Returns:
+            Str:
+        """
+        return self._open(app, "unihan.OtherMappings").get(self._code, "kMainlandTelegraph")
+
+
+

@@ -425,7 +425,7 @@ class Punct:
         """
         spirit.clipboard_copy(self.char())    
         
-    def constructor(self, context, value):
+    def constructor(self, value):
         """ @meta
         Params:
             Str:

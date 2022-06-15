@@ -69,7 +69,7 @@ class StrType:
         """
         pass
 
-    def kanjify(self, s):
+    def nounit_kanjify(self, s):
         """ @method [〇式漢数字化]
         アラビア数字・十式漢数字を〇式漢数字に変換する。
         変換できない部分はそのまま。
@@ -77,7 +77,7 @@ class StrType:
             Str:
         """
         from ageha.japanese.numeric import kansuuji
-        rep = Replacer(kansuuji.write)
+        rep = Replacer(kansuuji.nounit_write)
         for ch in s:
             if ch.isdigit() or kansuuji.detect(ch):
                 rep.hit(ch)
@@ -117,6 +117,65 @@ class StrType:
                 rep.unhit(ch)
         return rep.finish()
 
+    def page_kanjify(self, s):
+        """ @method
+        アラビア数字の頁を漢数字の頁に変換する。
+        変換できない部分はそのまま。
+        Returns:
+            Str:
+        """
+        if s.startswith("p."):
+            s = s[2:].lstrip()
+        if s.startswith("pp."):
+            s = s[3:].lstrip()
+        
+        from ageha.japanese.numeric import kansuuji
+        from ageha.japanese.punct import tate_convert
+        rep = Replacer(kansuuji.nounit_write)
+        for ch in s:
+            if ch.isdigit() or kansuuji.detect(ch):
+                rep.hit(ch)
+            else:
+                tch = tate_convert(ch)
+                rep.unhit(tch)
+        
+        return rep.finish() + "頁"
+    
+    def tate_nounit_kanjify(self, s):
+        """ @method
+        アラビア数字の頁を〇式漢数字に変換し、その他は縦書き用文字に変換する。
+        変換できない部分はそのまま。
+        Returns:
+            Str:
+        """
+        from ageha.japanese.numeric import kansuuji
+        from ageha.japanese.punct import tate_convert
+        rep = Replacer(kansuuji.nounit_write)
+        for ch in s:
+            if ch.isdigit() or kansuuji.detect(ch):
+                rep.hit(ch)
+            else:
+                tch = tate_convert(ch)
+                rep.unhit(tch)
+        return rep.finish()
+
+    def tatefy_name(self, s):
+        """ @method
+        縦書きのイニシャル入り欧文名を横書きの表記に変換する。
+        Returns:
+            Str:
+        """
+        from ageha.japanese.punct import tate_convert
+        ret = ""
+        for ch in s:
+            if ch == ".":
+                ret += "・"
+            elif ch == " ":
+                continue # 半角スペースは無視する
+            else:
+                ret += tate_convert(ch)
+        return ret
+
     def tatefy_biblelocation_1(s):
         """ @method
         聖書の章と節の漢数字化。
@@ -143,14 +202,14 @@ class StrType:
             ss += kansuuji.write(num)
         return ss
 
-    def unichars(self, s):
+    def uchars(self, s):
         """ @method
         ユニコード文字オブジェクトに分解する。
         Returns:
             Sheet[Unichar](char, code, name):
         """
-        from ageha.charpad import Unichar
-        return [Unichar.fromchar(c) for c in s]
+        from ageha.charpad import Uchar
+        return [Uchar.fromchar(c) for c in s]
     
 
 
