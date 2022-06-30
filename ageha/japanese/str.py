@@ -206,7 +206,7 @@ class StrType:
         """ @method
         ユニコード文字オブジェクトに分解する。
         Returns:
-            Sheet[Unichar](char, code, name):
+            Sheet[Uchar](char, code, name):
         """
         from ageha.charpad import Uchar
         return [Uchar.fromchar(c) for c in s]
