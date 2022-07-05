@@ -4,7 +4,7 @@ from ageha.charpad import Uchar
 
 def get_db_path(app, *paths):
     # データファイルのパス
-    p = app.local_dir("ageha").join(*paths)
+    p = app.get_local_dir("ageha").join(*paths)
     if not p.isfile():
         raise ValueError("データファイル'{}'がありません".format("/".join(paths)))
     return p
