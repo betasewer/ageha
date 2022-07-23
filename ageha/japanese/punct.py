@@ -354,11 +354,9 @@ def lookup_chars(instruction):
         if name in cname.split(";"):
             if L_PAREN & f:
                 chars["l"] = char
-                chars["c"] = char
                 continue
             elif R_PAREN & f:
                 chars["r"] = char
-                chars["c"] = char
                 break
             else:
                 chars["c"] = char
@@ -401,7 +399,7 @@ class Punct:
         if "c" in self._entry:
             return self._entry["c"]
         elif "l" in self._entry and "r" in self._entry:
-            return self._entry["l"] + self._entry["r"]
+            return self._entry["l"] + " " + self._entry["r"]
         else:
             raise ValueError("No entry")
         
@@ -433,4 +431,8 @@ class Punct:
         chars = lookup_chars(value)
         return Punct(chars)
         
+    def stringify(self):
+        """ @meta
+        """
+        return "{}".format(self.char())
         

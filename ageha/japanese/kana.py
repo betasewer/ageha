@@ -26,12 +26,12 @@ def zenkaku_to_hankaku_kana(ch):
         return kana
     
     dkana = findtable(ch, daku_kana, n_daku_kana)
-    if dkana is not None:
+    if dkana is not None and dkana in zenkaku_katakana:
         h = hankaku_katakana[zenkaku_katakana.index(dkana)]
         return h + chr(65438) # 半角濁点
     
     hkana = findtable(ch, hdaku_kana, n_hdaku_kana)
-    if hkana is not None:
+    if hkana is not None and dkana in zenkaku_katakana:
         h = hankaku_katakana[zenkaku_katakana.index(hkana)]
         return h + chr(65439) # 半角半濁点
     
