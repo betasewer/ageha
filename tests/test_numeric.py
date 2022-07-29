@@ -1,7 +1,9 @@
 import pytest
-from ageha.japanese.numeric import kansuuji, write_kansuuji, write_unit_kansuuji, composenum
+from ageha.numeric import compose_number
+from ageha.japanese.numeric import kansuuji, write_kansuuji, write_unit_kansuuji
 
 def test_composenum():
+    composenum = compose_number
     assert composenum(0, [1,2,3]) == 123
     assert composenum(4, [1,2,3]) == 1230000
     assert composenum(0, []) == 0

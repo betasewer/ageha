@@ -1,4 +1,63 @@
-from ageha.japanese.punct import tate_convert
+from ageha.japanese.punct import (
+    punctuations, tate_convert
+)
+from machaon.macatest import run
+
+def test_lookup_char():
+    ch = punctuations.lookup("hyphen")
+    assert ch
+    assert ch.char == chr(0x2010)
+
+    ch = punctuations.lookup("ダッシュ")
+    assert ch
+    assert ch.char == chr(0x2015)
+
+
+def test_lookup_kakko_cmd():
+    ch = punctuations.lookup("sumi-kakko/open/yoko")
+    assert ch.char == "【"
+
+    ch = punctuations.lookup("maru-kakko/half/close")
+    assert ch.char == ")"
+    
+    ch = punctuations.lookup("bracket/wide/tate/open")
+    assert ch.char == "﹇"
+
+
+def test_lookup_kakko():
+    ch = punctuations.lookup("sumi-kakko")
+    assert ch
+    assert ch.get("open/yoko").char == "【"
+    assert ch.get("close/yoko").char == "】"
+    assert ch.get("close/yoko").path == "sumi-kakko/close/yoko"
+
+    ch = punctuations.lookup("maru-kakko")
+    assert ch
+    assert ch.get("open/yoko").char == "（"
+    assert ch.get("close/yoko").char == "）"
+    assert ch.get("half").chars == "()"
+    assert ch.get("half/open").char == "("
+    assert ch.get("half/close").char == ")"
+    assert ch.get("half").path == "maru-kakko/half"
+
+    ch = punctuations.lookup("bracket")
+    assert ch
+    assert ch.get("open").char == "["
+    assert ch.get("close").char == "]"
+    assert ch.get("wide/yoko").chars == "［］"
+    assert ch.get("wide/yoko/close").path == "bracket/close/wide/yoko"
+
+
+def test_lookup_index():
+    ch = punctuations.lookup("leader/0")
+    assert ch.chars == "…"
+
+    ch = punctuations.lookup("leader/2")
+    assert ch.chars == chr(0xFE19)
+
+    ch = punctuations.lookup("leader/tate/1")
+    assert ch.chars == chr(0xFE19)
+
 
 
 def test_tate_convert():
