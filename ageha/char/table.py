@@ -158,11 +158,15 @@ class CharEntry:
     
     @property
     def chars(self):
-        """ すべての文字を取得する。 """
+        """ @method
+        すべての文字を取得する。 
+        Returns:
+            Str:
+        """
         return "".join(x.char for x in self._chain)
 
     def enum_chars(self):
-        """ @method [chars]
+        """ @method alias-name [list]
         文字エントリを列挙する。
         Returns:
             Sheet[](char, path):
@@ -192,20 +196,40 @@ class CharEntry:
         Params:
             klass(str):
         Returns:
-            CharEntry:
+            Char:
         """
         sel = self.table.parse_selector(klass)
         return self.select(sel)
+
+    def __truediv__(self, left):
+        return self.get(left)
 
     def copy(self, spirit):
         """ @task
         クリップボードにコピーする。
         """
-        spirit.clipboard_copy(self.char)    
+        spirit.clipboard_copy(self.char)  
+
+    #
+    #
+    #
+    def constructor(self, name):
+        """ @meta
+        Params:
+            str:
+        """
+        tablename, sep, rest = name.partition("/")
+        if not sep:
+            raise ValueError("テーブル名を先頭に/で指定してください")
+        if tablename == "punct":
+            from ageha.japanese.punct import punctuations
+            tbl = punctuations
+        else:
+            raise ValueError("不明なテーブル名です: " + tablename)
+        return tbl.lookup(rest)
     
     def stringify(self):
-        """ @meta
-        """
+        """ @meta """
         return "<{} '{}'>".format(self.path, self.chars)
         
 #
