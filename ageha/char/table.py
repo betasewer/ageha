@@ -208,7 +208,7 @@ class CharEntry:
         """ @task
         クリップボードにコピーする。
         """
-        spirit.clipboard_copy(self.char)  
+        spirit.clipboard_copy(self.chars)  
 
     #
     #
