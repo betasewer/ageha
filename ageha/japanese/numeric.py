@@ -154,44 +154,30 @@ parse_kansuuji = kansuuji.parse
 write_kansuuji = kansuuji.write
 write_unit_kansuuji = kansuuji.unit_write
 
-        
-#
-#
-#
-class KanBasic:
-    def constructor(self, value):
-        """ @meta """
-        return parse_kansuuji(value)
+def detect_kansuuji_type(text: str):
+    buf = ""
+    buftype = -1
+    for ch in text:
+        if kansuuji.detect(ch):
+            t = 1
+        else:
+            t = 0
+        if buftype != t:
+            if buf:
+                yield buftype, buf
+                buf = ""
+            buftype = t
+        buf += ch
+    if buf:
+        yield t, buf
 
-class Kan(KanBasic):
-    """ @type subtype
-    単位語なしの漢数字
-    BaseType:
-        Int: 
-    """
-    def stringify(self, value):
-        """ @meta """
-        return kansuuji.nounit_write(value)
-
-class Kan10(KanBasic):
-    """ @type subtype
-    単位語を明記する漢数字
-    BaseType:
-        Int: 
-    """
-    def stringify(self, value):
-        """ @meta """
-        return kansuuji.unit_write(value)
-
-class Kan1000(KanBasic):
-    """ @type subtype
-    4桁ごとの単位語を明記する漢数字
-    BaseType:
-        Int: 
-    """
-    def stringify(self, value):
-        """ @meta """
-        return kansuuji.write(value)
-
+def parse_kansuuji_string(text: str):
+    t = ""
+    for parttype, part in detect_kansuuji_type(text):
+        if parttype == 1:
+            t += str(parse_kansuuji(part))
+        else:
+            t += part
+    return t
 
 

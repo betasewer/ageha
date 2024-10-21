@@ -10,7 +10,7 @@ def findtable(ch, t1, t2):
         return t2[fpos]
     return None
 
-def zenkaku_to_hankaku(ch):
+def zenkaku_to_hankaku(ch, kana=True):
     """
     全角文字を半角文字に変換する。
     アルファベット、数字、カタカナに対応。
@@ -27,8 +27,11 @@ def zenkaku_to_hankaku(ch):
     if num is not None:
         return num
 
-    from ageha.japanese.kana import zenkaku_to_hankaku_kana
-    return zenkaku_to_hankaku_kana(ch)
+    if kana:
+        from ageha.japanese.kana import zenkaku_to_hankaku_kana
+        return zenkaku_to_hankaku_kana(ch)
+    else:
+        return ch
 
     
 def hankaku_to_zenkaku(ch):

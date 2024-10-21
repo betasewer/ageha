@@ -2,10 +2,20 @@
 zenkaku_katakana = "ァアィイゥウェエォオカキクケコサシスセソタチッツテトナニヌネノハヒフヘホマミムメモャヤュユョヨラリルレロワヲンー"
 hankaku_katakana = "ｧｱｨｲｩｳｪｴｫｵｶｷｸｹｺｻｼｽｾｿﾀﾁｯﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓｬﾔｭﾕｮﾖﾗﾘﾙﾚﾛﾜｦﾝｰ"
 
-daku_kana = "がぎくげござじずぜぞだぢづでどばびぶべぼガギグゲゴザジズゼゾダヂヅデドバビブベボヴ"
-n_daku_kana = "かきくけこさしすせそたちつてとはひふへほカキクケコサシスセソタチツテトハヒフヘホウ"
-hdaku_kana = "ぱぴぷべぼパピプペポ"
-n_hdaku_kana = "はひふへほハヒフヘホ"
+daku_katakana = "ガギグゲゴザジズゼゾダヂヅデドバビブベボヴ"
+n_daku_katakana = "カキクケコサシスセソタチツテトハヒフヘホウ"
+hdaku_katakana = "パピプペポ"
+n_hdaku_katakana = "ハヒフヘホ"
+
+daku_hiragana = "がぎくげござじずぜぞだぢづでどばびぶべぼ"
+n_daku_hiragana = "かきくけこさしすせそたちつてとはひふへほ"
+hdaku_hiragana = "ぱぴぷべぼ"
+n_hdaku_hiragana = "はひふへほ"
+
+daku_kana = daku_hiragana + daku_katakana
+n_daku_kana = n_daku_hiragana + n_daku_katakana
+hdaku_kana = hdaku_hiragana + hdaku_katakana
+n_hdaku_kana = n_hdaku_hiragana + n_hdaku_katakana
 
 def findtable(ch, t1, t2):
     fpos = t1.find(ch)
@@ -36,6 +46,16 @@ def zenkaku_to_hankaku_kana(ch):
         return h + chr(65439) # 半角半濁点
     
     return ch
+
+def is_katakana(ch: str):
+    """
+    全角カナであればTrue
+    """
+    katakana = zenkaku_katakana + daku_katakana + n_daku_katakana
+    if katakana.find(ch) != -1:
+        return True
+    return False    
+
     
 def hankaku_to_zenkaku_kana(ch):
     """
